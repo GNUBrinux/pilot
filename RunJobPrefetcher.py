@@ -52,7 +52,7 @@ except Exception, e:
 class RunJobPrefetcher(RunJob):
     
     # private data members
-    __runjob = "RunJobEvent"                     # String defining the sub class
+    __runjob = "RunJobPrefetcher"                # String defining the sub class
     __instance = None                            # Boolean used by subclasses to become a Singleton
     __error = PilotErrors()                      # PilotErrors object
     __errorCode = 0                              # Error code, e.g. set by stage-out method
@@ -81,13 +81,13 @@ class RunJobPrefetcher(RunJob):
     __stageout_queue = []                        # Queue for files to be staged-out; files are added as they arrive and removed after they have been staged-out
     __pfc_path = ""                              # The path to the pool file catalog
     __message_server_payload = None              # Message server for the payload
-    __message_server_prefetcher = None           # Message server for Prefetcher
+#   __message_server_prefetcher = None           # Message server for Prefetcher
     __message_thread_payload = None              # Thread for listening to messages from the payload
-    __message_thread_prefetcher = None           # Thread for listening to messages from the Prefetcher
+#   __message_thread_prefetcher = None           # Thread for listening to messages from the Prefetcher
     __status = True                              # Global job status; will be set to False if an event range or stage-out fails
     __athenamp_is_ready = False                  # True when an AthenaMP worker is ready to process an event range
-    __prefetcher_is_ready = False                # True when Prefetcher is ready to receive an event range
-    __prefetcher_has_finished = False            # True when Prefetcher has updated an event range which then should be sent to AthenaMP
+#   __prefetcher_is_ready = False                # True when Prefetcher is ready to receive an event range
+#   __prefetcher_has_finished = False            # True when Prefetcher has updated an event range which then should be sent to AthenaMP
     __asyncOutputStager_thread = None            #
     __asyncOutputStager_thread_sleep_time = 600  #
     __analysisJob = False                        # True for analysis job
@@ -98,14 +98,14 @@ class RunJobPrefetcher(RunJob):
     __cache = ""                                 # Cache URL, e.g. used by LSST
     __metadata_filename = ""                     # Full path to the metadata file
     __yamplChannelNamePayload = None             # Yampl channel name used by the payload (AthenaMP)
-    __yamplChannelNamePrefetcher = None          # Yampl channel name used by the Prefetcher
+   #__yamplChannelNamePrefetcher = None          # Yampl channel name used by the Prefetcher
     __useEventIndex = True                       # Should Event Index be used? If not, a TAG file will be created
     __tokenextractor_input_list_filenane = ""    #
     __sending_event_range = False                # True while event range is being sent to payload
     __current_event_range = ""                   # Event range being sent to payload
     __updated_lfn = ""                           # Updated LFN sent from the Prefetcher
     __useTokenExtractor = False                  # Should the TE be used?
-    __usePrefetcher = False                      # Should the Prefetcher be user
+   #__usePrefetcher = False                      # Should the Prefetcher be user
     __inFilePosEvtNum = False                    # Use event number ranges relative to in-file position
     __pandaserver = ""                   # Full PanDA server url incl. port and sub dirs
     
@@ -144,7 +144,6 @@ class RunJobPrefetcher(RunJob):
     # input files
     __input_files = {}
     
-    
 # Getter and setter methods
 
     def getNEvents(self):
@@ -178,7 +177,7 @@ class RunJobPrefetcher(RunJob):
                                                                                   self.__stageoutStorages['failover']['success'],
                                                                                   self.__stageoutStorages['failover']['failed'])
         return retStr
-
+        
     def setFinalESStatus(self, job):
         if self.__nEventsW < 1 and self.__nStageOutFailures >= 3:
             job.subStatus = 'pilot_failed'
@@ -495,15 +494,15 @@ class RunJobPrefetcher(RunJob):
 
         self.__message_server_payload = message_server
 
-    def getMessageServerPrefetcher(self):
-        """ Getter for __message_server_prefetcher """
+#    def getMessageServerPrefetcher(self):
+#        """ Getter for __message_server_prefetcher """
+#
+#        return self.__message_server_prefetcher
 
-        return self.__message_server_prefetcher
-
-    def setMessageServerPrefetcher(self, message_server):
-        """ Setter for __message_server_prefetcher """
-
-        self.__message_server_prefetcher = message_server
+#    def setMessageServerPrefetcher(self, message_server):
+#        """ Setter for __message_server_prefetcher """
+#
+#        self.__message_server_prefetcher = message_server
 
     def getMessageThreadPayload(self):
         """ Getter for __message_thread_payload """
@@ -515,15 +514,15 @@ class RunJobPrefetcher(RunJob):
 
         self.__message_thread_payload = message_thread_payload
 
-    def getMessageThreadPrefetcher(self):
-        """ Getter for __message_thread_prefetcher """
-
-        return self.__message_thread_prefetcher
-
-    def setMessageThreadPrefetcher(self, message_thread_prefetcher):
-        """ Setter for __message_thread_prefetcher """
-
-        self.__message_thread_prefetcher = message_thread_prefetcher
+#    def getMessageThreadPrefetcher(self):
+#        """ Getter for __message_thread_prefetcher """
+#
+#        return self.__message_thread_prefetcher
+#
+#    def setMessageThreadPrefetcher(self, message_thread_prefetcher):
+#        """ Setter for __message_thread_prefetcher """
+#
+#        self.__message_thread_prefetcher = message_thread_prefetcher 
 
     def isAthenaMPReady(self):
         """ Getter for __athenamp_is_ready """
@@ -535,25 +534,25 @@ class RunJobPrefetcher(RunJob):
 
         self.__athenamp_is_ready = athenamp_is_ready
 
-    def isPrefetcherReady(self):
-        """ Getter for __prefetcher_is_ready """
-
-        return self.__prefetcher_is_ready
-
-    def setPrefetcherIsReady(self, prefetcher_is_ready):
-        """ Setter for __prefetcher_is_ready """
-
-        self.__prefetcher_is_ready = prefetcher_is_ready
-
-    def prefetcherHasFinished(self):
-        """ Getter for __prefetcher_has_finished """
-
-        return self.__prefetcher_has_finished
-
-    def setPrefetcherHasFinished(self, prefetcher_has_finished):
-        """ Setter for __prefetcher_has_finished """
-
-        self.__prefetcher_has_finished = prefetcher_has_finished
+#    def isPrefetcherReady(self):
+#        """ Getter for __prefetcher_is_ready """
+#
+#        return self.__prefetcher_is_ready
+#
+#    def setPrefetcherIsReady(self, prefetcher_is_ready):
+#        """ Setter for __prefetcher_is_ready """
+#
+#        self.__prefetcher_is_ready = prefetcher_is_ready
+#
+#    def prefetcherHasFinished(self):
+#        """ Getter for __prefetcher_has_finished """
+#
+#        return self.__prefetcher_has_finished
+#
+#    def setPrefetcherHasFinished(self, prefetcher_has_finished):
+#        """ Setter for __prefetcher_has_finished """
+#
+#        self.__prefetcher_has_finished = prefetcher_has_finished 
 
     def getAsyncOutputStagerThread(self):
         """ Getter for __asyncOutputStager_thread """
@@ -618,15 +617,15 @@ class RunJobPrefetcher(RunJob):
 
         self.__yamplChannelNamePayload = yamplChannelNamePayload
 
-    def getYamplChannelNamePrefetcher(self):
-        """ Getter for __yamplChannelNamePrefetcher """
-
-        return self.__yamplChannelNamePrefetcher
-
-    def setYamplChannelNamePrefetcher(self, yamplChannelNamePrefetcher):
-        """ Setter for __yamplChannelNamePrefetcher """
-
-        self.__yamplChannelNamePrefetcher = yamplChannelNamePrefetcher
+#    def getYamplChannelNamePrefetcher(self):
+#        """ Getter for __yamplChannelNamePrefetcher """
+#
+#        return self.__yamplChannelNamePrefetcher
+#
+#    def setYamplChannelNamePrefetcher(self, yamplChannelNamePrefetcher):
+#        """ Setter for __yamplChannelNamePrefetcher """
+#
+#        self.__yamplChannelNamePrefetcher = yamplChannelNamePrefetcher
 
     def getStatus(self):
         """ Getter for __status """
@@ -934,7 +933,7 @@ class RunJobPrefetcher(RunJob):
         # e.g. self.__errorLabel = errorLabel
         uuidgen = commands.getoutput('uuidgen')
         self.__yamplChannelNamePayload = "EventService_EventRanges-%s" % (uuidgen)
-        self.__yamplChannelNamePrefetcher = "EventService_Prefetcher-%s" % (uuidgen)
+        #self.__yamplChannelNamePrefetcher = "EventService_Prefetcher-%s" % (uuidgen)
 
     # is this necessary? doesn't exist in RunJob
     def __new__(cls, *args, **kwargs):
@@ -964,20 +963,20 @@ class RunJobPrefetcher(RunJob):
 
         return True
 
-    def startMessageThreadPrefetcher(self):
-        """ Start the message thread for the prefetcher """
-
-        self.__message_thread_prefetcher.start()
-
-    def stopMessageThreadPrefetcher(self):
-        """ Stop the message thread for the prefetcher """
-
-        self.__message_thread_prefetcher.stop()
-
-    def joinMessageThreadPrefetcher(self):
-        """ Join the message thread for the prefetcher """
-
-        self.__message_thread_prefetcher.join()
+#    def startMessageThreadPrefetcher(self):
+#        """ Start the message thread for the prefetcher """
+#
+#        self.__message_thread_prefetcher.start()
+#
+#    def stopMessageThreadPrefetcher(self):
+#        """ Stop the message thread for the prefetcher """
+#
+#        self.__message_thread_prefetcher.stop()
+#
+#    def joinMessageThreadPrefetcher(self):
+#        """ Join the message thread for the prefetcher """
+#
+#        self.__message_thread_prefetcher.join()
 
     def payloadListener(self):
         """ Listen for messages from the payload """
@@ -1120,6 +1119,39 @@ class RunJobPrefetcher(RunJob):
 
         # Execute and return the Prefetcher subprocess object
         return self.getSubprocess(thisExperiment, cmd, stdout=stdout, stderr=stderr)
+    
+    def createMessageServer(self, prefetcher=False):
+        """ Create the message server socket object """
+        # Create a message server for the payload by default, otherwise for Prefetcher if prefetcher is set
+
+        status = False
+
+        # Create the server socket
+        if MessageServer:
+            if prefetcher:
+                self.__message_server_prefetcher = MessageServer(socketname=self.__yamplChannelNamePrefetcher, context='local')
+
+                # is the server alive?
+                if not self.__message_server_prefetcher.alive():
+                    # destroy the object
+                    tolog("!!WARNING!!3333!! Message server for Prefetcher is not alive")
+                    self.__message_server_prefetcher = None
+                else:
+                    status = True
+            else:
+                self.__message_server_payload = MessageServer(socketname=self.__yamplChannelNamePayload, context='local')
+
+                # is the server alive?
+                if not self.__message_server_payload.alive():
+                    # destroy the object
+                    tolog("!!WARNING!!3333!! Message server for the payload is not alive")
+                    self.__message_server_payload = None
+                else:
+                    status = True
+        else:
+            tolog("!!WARNING!!3333!! MessageServer object is not available")
+
+        return status
 
     def sendMessage(self, message, prefetcher=False):
         """ Send a message """
@@ -1243,3 +1275,36 @@ if __name__ == "__main__":
             prefetcherProcess = None
 
         # service tools ends here ..........................................................................
+        # Create the file objects
+        athenamp_stdout, athenamp_stderr = runJob.getStdoutStderrFileObjects(stdoutName="athena_stdout.txt", stderrName="athena_stderr.txt")
+
+        # download event ranges before athenaMP
+        # Pilot will download some event ranges from the Event Server
+        catchalls = runJob.resolveConfigItem('catchall')
+        first_event_ranges = None
+        try:
+            job.coreCount = int(job.coreCount)
+        except:
+            pass
+        if runJob.getAllowPrefetchEvents():
+            numRanges = max(job.coreCount, runJob.getMinEvents())
+            message = downloadEventRanges(job.jobId, job.jobsetID, job.taskID, job.pandaProxySecretKey, numRanges=numRanges, url=runJob.getPanDAServer())
+            # Create a list of event ranges from the downloaded message
+            first_event_ranges = runJob.extractEventRanges(message)
+            if first_event_ranges is None or first_event_ranges == []:
+                tolog("No more events. will finish this job directly")
+                runJob.failJob(0, error.ERR_NOEVENTS, job, pilotErrorDiag="No events before start AthenaMP")
+            if len(first_event_ranges) < runJob.getMinEvents():
+                tolog("Got less events(%s events) than minimal requirement(%s events). will finish this job directly" % (len(first_event_ranges), runJob.getMinEvents()))
+                runJob.failJob(0, error.ERR_TOOFEWEVENTS, job, pilotErrorDiag="Got less events(%s events) than minimal requirement(%s events)" % (len(first_event_ranges), runJob.getMinEvents()))
+           
+            # Get the current list of eventRangeIDs
+            currentEventRangeIDs = runJob.extractEventRangeIDs(first_event_ranges)
+
+            # Store the current event range id's in the total event range id dictionary
+            runJob.addEventRangeIDsToDictionary(currentEventRangeIDs)
+            
+        # Create and start the AthenaMP process
+        t0 = os.times()
+        tolog("t0 = %s" % str(t0))
+        athenaMPProcess = runJob.getSubprocess(thisExperiment, runCommandList[0], stdout=athenamp_stdout, stderr=athenamp_stderr)
