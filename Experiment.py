@@ -553,7 +553,7 @@ class Experiment(object):
             if isHPC:
                 name = "RunJob%sEvent" % (_name)
             else:
-                name = "RunJobEvent"
+                name = "RunJobPrefetcher"
 
         tolog("Selected subprocess: %s" % (name))
 
@@ -572,8 +572,8 @@ class Experiment(object):
 
         url = '%s:%s/server/panda' % (env['pshttpurl'], str(env['psport']))
 
-        if subprocessName == "RunJobEvent":
-            jobargs = [env['pyexe'], "RunJobEvent.py",
+        if subprocessName == "RunJobPrefetcher":
+            jobargs = [env['pyexe'], "RunJobPrefetcher.py",
                        "-a", env['thisSite'].appdir,
                        "-b", env['queuename'],
                        "-d", env['jobDic']["prod"][1].workdir,
