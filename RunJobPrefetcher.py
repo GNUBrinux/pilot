@@ -1306,6 +1306,7 @@ if __name__ == "__main__":
             
         # Create and start the AthenaMP process
         t0 = os.times()
+        tolog("t0 = %s" % str(t0))
         path = os.path.join(job.workdir, 't0_times.txt')
         if writeFile(path, str(t0)):
             tolog("Wrote %s to file %s" % (str(t0), path))
