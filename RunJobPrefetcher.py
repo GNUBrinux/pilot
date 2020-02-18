@@ -1318,3 +1318,5 @@ if __name__ == "__main__":
              path = os.path.join(job.workdir, 'cpid.txt')
              if writeFile(path, str(athenaMPProcess.pid)):
                  tolog("Wrote cpid=%s to file %s" % (athenaMPProcess.pid, path))
+        tolog("t0 = %s" % str(t0))
+        athenaMPProcess = runJob.getSubprocess(thisExperiment, runCommandList[0], stdout=athenamp_stdout, stderr=athenamp_stderr)
