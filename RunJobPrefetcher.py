@@ -81,13 +81,15 @@ class RunJobPrefetcher(RunJob):
     __stageout_queue = []                        # Queue for files to be staged-out; files are added as they arrive and removed after they have been staged-out
     __pfc_path = ""                              # The path to the pool file catalog
     __message_server_payload = None              # Message server for the payload
-#   __message_server_prefetcher = None           # Message server for Prefetcher
+   __message_server_prefetcher = None           # Message server for Prefetcher
     __message_thread_payload = None              # Thread for listening to messages from the payload
-#   __message_thread_prefetcher = None           # Thread for listening to messages from the Prefetcher
+   __message_thread_prefetcher = None           # Thread for listening to messages from the Prefetcher
+   __message_server_event = None                    # Message server for runjobevent
+   __message_thread_event = None                    # Thread for listening to messages from runjobevent
     __status = True                              # Global job status; will be set to False if an event range or stage-out fails
     __athenamp_is_ready = False                  # True when an AthenaMP worker is ready to process an event range
-#   __prefetcher_is_ready = False                # True when Prefetcher is ready to receive an event range
-#   __prefetcher_has_finished = False            # True when Prefetcher has updated an event range which then should be sent to AthenaMP
+   __prefetcher_is_ready = False                # True when Prefetcher is ready to receive an event range
+   __prefetcher_has_finished = False            # True when Prefetcher has updated an event range which then should be sent to AthenaMP
     __asyncOutputStager_thread = None            #
     __asyncOutputStager_thread_sleep_time = 600  #
     __analysisJob = False                        # True for analysis job
@@ -98,14 +100,14 @@ class RunJobPrefetcher(RunJob):
     __cache = ""                                 # Cache URL, e.g. used by LSST
     __metadata_filename = ""                     # Full path to the metadata file
     __yamplChannelNamePayload = None             # Yampl channel name used by the payload (AthenaMP)
-   #__yamplChannelNamePrefetcher = None          # Yampl channel name used by the Prefetcher
+   __yamplChannelNamePrefetcher = None          # Yampl channel name used by the Prefetcher
     __useEventIndex = True                       # Should Event Index be used? If not, a TAG file will be created
     __tokenextractor_input_list_filenane = ""    #
     __sending_event_range = False                # True while event range is being sent to payload
     __current_event_range = ""                   # Event range being sent to payload
     __updated_lfn = ""                           # Updated LFN sent from the Prefetcher
     __useTokenExtractor = False                  # Should the TE be used?
-   #__usePrefetcher = False                      # Should the Prefetcher be user
+   __usePrefetcher = False                      # Should the Prefetcher be used
     __inFilePosEvtNum = False                    # Use event number ranges relative to in-file position
     __pandaserver = ""                   # Full PanDA server url incl. port and sub dirs
     
@@ -494,15 +496,15 @@ class RunJobPrefetcher(RunJob):
 
         self.__message_server_payload = message_server
 
-#    def getMessageServerPrefetcher(self):
-#        """ Getter for __message_server_prefetcher """
-#
-#        return self.__message_server_prefetcher
+    def getMessageServerPrefetcher(self):
+        """ Getter for __message_server_prefetcher """
 
-#    def setMessageServerPrefetcher(self, message_server):
-#        """ Setter for __message_server_prefetcher """
-#
-#        self.__message_server_prefetcher = message_server
+        return self.__message_server_prefetcher
+
+    def setMessageServerPrefetcher(self, message_server):
+        """ Setter for __message_server_prefetcher """
+
+        self.__message_server_prefetcher = message_server
 
     def getMessageThreadPayload(self):
         """ Getter for __message_thread_payload """
@@ -514,15 +516,15 @@ class RunJobPrefetcher(RunJob):
 
         self.__message_thread_payload = message_thread_payload
 
-#    def getMessageThreadPrefetcher(self):
-#        """ Getter for __message_thread_prefetcher """
-#
-#        return self.__message_thread_prefetcher
-#
-#    def setMessageThreadPrefetcher(self, message_thread_prefetcher):
-#        """ Setter for __message_thread_prefetcher """
-#
-#        self.__message_thread_prefetcher = message_thread_prefetcher 
+    def getMessageThreadPrefetcher(self):
+        """ Getter for __message_thread_prefetcher """
+
+        return self.__message_thread_prefetcher
+
+    def setMessageThreadPrefetcher(self, message_thread_prefetcher):
+        """ Setter for __message_thread_prefetcher """
+
+        self.__message_thread_prefetcher = message_thread_prefetcher 
 
     def isAthenaMPReady(self):
         """ Getter for __athenamp_is_ready """
@@ -534,25 +536,25 @@ class RunJobPrefetcher(RunJob):
 
         self.__athenamp_is_ready = athenamp_is_ready
 
-#    def isPrefetcherReady(self):
-#        """ Getter for __prefetcher_is_ready """
-#
-#        return self.__prefetcher_is_ready
-#
-#    def setPrefetcherIsReady(self, prefetcher_is_ready):
-#        """ Setter for __prefetcher_is_ready """
-#
-#        self.__prefetcher_is_ready = prefetcher_is_ready
-#
-#    def prefetcherHasFinished(self):
-#        """ Getter for __prefetcher_has_finished """
-#
-#        return self.__prefetcher_has_finished
-#
-#    def setPrefetcherHasFinished(self, prefetcher_has_finished):
-#        """ Setter for __prefetcher_has_finished """
-#
-#        self.__prefetcher_has_finished = prefetcher_has_finished 
+    def isPrefetcherReady(self):
+        """ Getter for __prefetcher_is_ready """
+
+        return self.__prefetcher_is_ready
+
+    def setPrefetcherIsReady(self, prefetcher_is_ready):
+        """ Setter for __prefetcher_is_ready """
+
+        self.__prefetcher_is_ready = prefetcher_is_ready
+
+    def prefetcherHasFinished(self):
+        """ Getter for __prefetcher_has_finished """
+
+        return self.__prefetcher_has_finished
+
+    def setPrefetcherHasFinished(self, prefetcher_has_finished):
+        """ Setter for __prefetcher_has_finished """
+
+        self.__prefetcher_has_finished = prefetcher_has_finished 
 
     def getAsyncOutputStagerThread(self):
         """ Getter for __asyncOutputStager_thread """
@@ -617,15 +619,15 @@ class RunJobPrefetcher(RunJob):
 
         self.__yamplChannelNamePayload = yamplChannelNamePayload
 
-#    def getYamplChannelNamePrefetcher(self):
-#        """ Getter for __yamplChannelNamePrefetcher """
-#
-#        return self.__yamplChannelNamePrefetcher
-#
-#    def setYamplChannelNamePrefetcher(self, yamplChannelNamePrefetcher):
-#        """ Setter for __yamplChannelNamePrefetcher """
-#
-#        self.__yamplChannelNamePrefetcher = yamplChannelNamePrefetcher
+    def getYamplChannelNamePrefetcher(self):
+        """ Getter for __yamplChannelNamePrefetcher """
+
+        return self.__yamplChannelNamePrefetcher
+
+    def setYamplChannelNamePrefetcher(self, yamplChannelNamePrefetcher):
+        """ Setter for __yamplChannelNamePrefetcher """
+
+        self.__yamplChannelNamePrefetcher = yamplChannelNamePrefetcher
 
     def getStatus(self):
         """ Getter for __status """
@@ -933,7 +935,7 @@ class RunJobPrefetcher(RunJob):
         # e.g. self.__errorLabel = errorLabel
         uuidgen = commands.getoutput('uuidgen')
         self.__yamplChannelNamePayload = "EventService_EventRanges-%s" % (uuidgen)
-        #self.__yamplChannelNamePrefetcher = "EventService_Prefetcher-%s" % (uuidgen)
+        self.__yamplChannelNamePrefetcher = "EventService_Prefetcher-%s" % (uuidgen)
 
     # is this necessary? doesn't exist in RunJob
     def __new__(cls, *args, **kwargs):
@@ -963,20 +965,20 @@ class RunJobPrefetcher(RunJob):
 
         return True
 
-#    def startMessageThreadPrefetcher(self):
-#        """ Start the message thread for the prefetcher """
-#
-#        self.__message_thread_prefetcher.start()
-#
-#    def stopMessageThreadPrefetcher(self):
-#        """ Stop the message thread for the prefetcher """
-#
-#        self.__message_thread_prefetcher.stop()
-#
-#    def joinMessageThreadPrefetcher(self):
-#        """ Join the message thread for the prefetcher """
-#
-#        self.__message_thread_prefetcher.join()
+    def startMessageThreadPrefetcher(self):
+        """ Start the message thread for the prefetcher """
+
+        self.__message_thread_prefetcher.start()
+
+    def stopMessageThreadPrefetcher(self):
+        """ Stop the message thread for the prefetcher """
+
+        self.__message_thread_prefetcher.stop()
+
+    def joinMessageThreadPrefetcher(self):
+        """ Join the message thread for the prefetcher """
+
+        self.__message_thread_prefetcher.join()
 
     def payloadListener(self):
         """ Listen for messages from the payload """
@@ -1010,17 +1012,17 @@ class RunJobPrefetcher(RunJob):
                 if i > 0:
                     tolog("Delayed %d s for send message to complete" % (i*10))
 
-#                if not "Ready for" in buf:
-#                    if self.__eventRangeID_dictionary.keys():
-#                        try:
-#                            keys = self.__eventRangeID_dictionary.keys()
-#                            key = keys[0]
-#                            tolog("Faking error for range = %s" % (key))
-#                            buf = "ERR_TE_RANGE %s: Range contains wrong positional number 5001" % (key)
-#                        except Exception,e:
-#                            tolog("No event ranges yet:%s" % (e))
-#                    #buf = "ERR_TE_FATAL Range-2: CURL curl_easy_perform() failed! Couldn't resolve host name"
-#                    #buf = "ERR_TE_FATAL 5211313-2452346274-2058479689-3-8: URL No tokens for GUID 00224B03-8005-E849-BCD5-D8F8F764B630"
+                if not "Ready for" in buf:
+                    if self.__eventRangeID_dictionary.keys():
+                        try:
+                            keys = self.__eventRangeID_dictionary.keys()
+                            key = keys[0]
+                            tolog("Faking error for range = %s" % (key))
+                            buf = "ERR_TE_RANGE %s: Range contains wrong positional number 5001" % (key)
+                        except Exception,e:
+                            tolog("No event ranges yet:%s" % (e))
+                    #buf = "ERR_TE_FATAL Range-2: CURL curl_easy_perform() failed! Couldn't resolve host name"
+                    #buf = "ERR_TE_FATAL 5211313-2452346274-2058479689-3-8: URL No tokens for GUID 00224B03-8005-E849-BCD5-D8F8F764B630"
 
                 # Interpret the message and take the appropriate action
                 if "Ready for events" in buf:
@@ -1319,5 +1321,3 @@ if __name__ == "__main__":
              path = os.path.join(job.workdir, 'cpid.txt')
              if writeFile(path, str(athenaMPProcess.pid)):
                  tolog("Wrote cpid=%s to file %s" % (athenaMPProcess.pid, path))
-        tolog("t0 = %s" % str(t0))
-        athenaMPProcess = runJob.getSubprocess(thisExperiment, runCommandList[0], stdout=athenamp_stdout, stderr=athenamp_stderr)
